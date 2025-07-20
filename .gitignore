@@ -1,3 +1,4 @@
 .env
 .vscode/settings.json
 __pycache__/rag_app.cpython-312.pyc
+.venv
