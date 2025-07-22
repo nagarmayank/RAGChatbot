@@ -1,0 +1,102 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ragchatbot
+  labels:
+    name: ragchatbot
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ragchatbot-service
+  namespace: ragchatbot
+spec:
+  selector:
+    app: ragchatbot
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 8501
+  type: LoadBalancer
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ragchatbot
+  namespace: ragchatbot
+  labels:
+    app: ragchatbot
+spec:
+  containers:
+    - name: ragchatbot
+      image: ragchatbot:latest
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 8501
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: 8501
+        initialDelaySeconds: 10
+        periodSeconds: 10
+      livenessProbe:
+        httpGet:
+          path: /ready
+          port: 8501
+        initialDelaySeconds: 30
+        periodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ragchatbot
+  namespace: ragchatbot
+spec:
+  selector:
+    matchLabels:
+      app: ragchatbot
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: ragchatbot
+        namespace: ragchatbot
+    spec:
+      containers:
+        - name: ragchatbot
+          image: ragchatbot
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8501
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ragchatbot
+  namespace: ragchatbot
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ragchatbot
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80

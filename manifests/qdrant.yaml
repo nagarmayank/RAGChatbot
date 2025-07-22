@@ -1,0 +1,94 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: vectordb
+  labels:
+    name: vectordb
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: qdrant-pv
+  namespace: vectordb
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qdrant-data
+  namespace: vectordb
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: qdrant-db
+  namespace: vectordb
+spec:
+  selector:
+    matchLabels:
+      app: qdrant-db
+  serviceName: qdrant-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: qdrant-db
+        namespace: vectordb
+    spec:
+      containers:
+      - name: qdrant-db
+        image: qdrant/qdrant
+        ports:
+        - containerPort: 6333
+          name: web
+        - containerPort: 6334
+          name: grpc        
+        volumeMounts:
+        - name: qdrant-data
+          mountPath: /qdrant/storage
+  volumeClaimTemplates:
+  - metadata:
+      name: qdrant-data
+      namespace: vectordb
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 10Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qdrant-db
+  namespace: vectordb
+spec:
+  selector:
+    app: qdrant-db
+  ports:
+    - name: web
+      protocol: TCP
+      port: 6333
+      targetPort: 6333
+    - name: grpc
+      protocol: TCP
+      port: 6334
+      targetPort: 6334

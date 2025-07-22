@@ -1,9 +1,13 @@
 import streamlit as st
-import os
 from langchain_community.document_loaders import PyMuPDFLoader
-from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
+from qdrant_client import QdrantClient
+from langchain_qdrant import QdrantVectorStore
+import logging
+import os
+
+logging.basicConfig(level=logging.INFO)
 
 st.title("Add Documents")
 
@@ -11,6 +15,26 @@ uploaded_files = st.file_uploader(
     "Upload PDF files to add to the knowledge base",
     type=["pdf"],
     accept_multiple_files=True
+)
+
+qdrant_host = "localhost"
+qdrant_port = 6333
+collection_name = "rag_documents"
+
+model_name = "BAAI/bge-large-en"
+model_kwargs = {"device": "cpu"}
+encode_kwargs = {"normalize_embeddings": True}
+embeddings = HuggingFaceEmbeddings(
+    model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs
+)
+
+client = QdrantClient(host=qdrant_host, port=qdrant_port)
+# client.create_collection(collection_name=collection_name, vectors_config=VectorParams(size=1024, distance=Distance.COSINE),)
+
+vector_store = QdrantVectorStore.from_existing_collection(
+    collection_name=collection_name,
+    embedding=embeddings,
+    url=f"http://{qdrant_host}:{qdrant_port}",
 )
 
 if uploaded_files:
@@ -24,12 +48,6 @@ if uploaded_files:
 
     # Vector DB creation
     with st.spinner("Processing and updating vector database..."):
-        model_name = "BAAI/bge-small-en"
-        model_kwargs = {"device": "cpu"}
-        encode_kwargs = {"normalize_embeddings": True}
-        embeddings = HuggingFaceEmbeddings(
-            model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs
-        )
         splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
         v_path = os.path.join(os.getcwd(), "vectordb")
 
@@ -37,10 +55,7 @@ if uploaded_files:
             file_path = os.path.join(data_dir, uploaded_file.name)
             pdf_loader = PyMuPDFLoader(file_path=file_path)
             docs = pdf_loader.load_and_split(text_splitter=splitter)
-            if os.path.exists(v_path):
-                db = FAISS.load_local(folder_path=v_path, embeddings=embeddings, allow_dangerous_deserialization=True)
-                db.add_documents(docs)
-            else:
-                db = FAISS.from_documents(docs, embedding=embeddings)
-            db.save_local(folder_path=v_path)
+            vector_store.add_documents(docs)
     st.success("Vector database updated successfully!")
+
+logging.info("Documents added to the collection")

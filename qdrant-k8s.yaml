@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: qdrant-local
+   namespace: default
+spec:
+   replicas: 3
+   strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+   selector:
+      matchLabels:
+         bb: vector-store
+   template:
+      metadata:
+         labels:
+            bb: vector-store
+      spec:
+         containers:
+            - name: qdrant
+              image: qdrant/qdrant:latest
+              imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: qdrant-entrypoint
+   namespace: default
+spec:
+   type: NodePort
+   selector:
+      bb: vector-store
+   ports:
+      - name: port1
+        port: 6333
+        targetPort: 6333
+        nodePort: 30001
+      - name: port2
+        port: 6334
+        targetPort: 6334
+        nodePort: 30002

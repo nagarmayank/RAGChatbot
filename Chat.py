@@ -3,10 +3,13 @@ from streamlit_chat import message as st_chat_message
 from rag_app import RAGAgent
 from langchain.chat_models import init_chat_model
 from langchain import hub
+from dotenv import load_dotenv
 
 st.set_page_config(page_title="RAG Chatbot", page_icon=":robot_face:", layout="wide", initial_sidebar_state="expanded")
 model = init_chat_model("gemini-2.5-flash-preview-05-20", model_provider="google_genai", temperature=0.7)
 prompt = hub.pull("rlm/rag-prompt")
+
+load_dotenv()
 
 # Initialize session state for chat history
 if 'history' not in st.session_state:
@@ -17,6 +20,8 @@ with st.container(height=500):
     for idx, entry in enumerate(st.session_state.history):
         st_chat_message(entry["question"], is_user=True, key=f"user_{idx}", avatar_style=None)
         st_chat_message(entry["answer"], is_user=False, key=f"bot_{idx}", avatar_style=None)
+        if entry.get("sources"):
+            st.markdown(f"<small><b>Sources:</b> {', '.join(entry['sources'])}</small>", unsafe_allow_html=True)
 
 # Spacer to push input to bottom
 st.markdown("<div style='height: 5px;'></div>", unsafe_allow_html=True)
@@ -39,7 +44,8 @@ if st.button("Submit"):
         # Store the question and answer in history
         st.session_state.history.append({
             "question": user_question,
-            "answer": result["answer"]
+            "answer": result["answer"],
+            "sources": result.get("sources", [])
         })
         st.rerun()
     else:
