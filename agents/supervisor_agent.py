@@ -1,10 +1,7 @@
 from langchain.chat_models import init_chat_model
-from langchain.chat_models import init_chat_model
 from langgraph_supervisor import create_supervisor
-from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.store.memory import InMemoryStore
-
-from utils import pretty_print_messages
 
 from agents.math_agent import math_agent
 from agents.rag_agent import rag_agent
@@ -22,11 +19,10 @@ model_provider = "google_genai" #"groq" #
 model = init_chat_model(model=model_name, model_provider=model_provider)
 
 def supervisor_agent():
-    memory = InMemorySaver()
-    store = InMemoryStore()
+    memory = MemorySaver()
     supervisor_agent = create_supervisor(
         model=model,
-        agents=[math_agent(), rag_agent(), search_agent(), llm_agent(), ambiguous_agent()],
+        agents=[math_agent(checkpointer=memory), rag_agent(checkpointer=memory), search_agent(checkpointer=memory), llm_agent(checkpointer=memory), ambiguous_agent(checkpointer=memory)],
         prompt="You are a supervisor responsible for delegating tasks. \
             Assign work to one agent at a time, do not call agents in parallel. Do not do any work yourself. Make sure that either one of the agent is assigned the task. \" \
             The available agents are: \
@@ -37,6 +33,6 @@ def supervisor_agent():
             ambiguous_agent is for handling ambiguous requests that do not have any context.",
         output_mode="last_message",
         include_agent_name='inline'
-    ).compile(checkpointer=memory, store=store)
+    ).compile(checkpointer=memory)
 
     return supervisor_agent

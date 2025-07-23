@@ -9,7 +9,7 @@ model_provider = "google_genai" #"groq" #
 
 model = init_chat_model(model=model_name, model_provider=model_provider)
 
-def ambiguous_agent():
+def ambiguous_agent(checkpointer=None):
     """
     Create an agent that handles ambiguous requests.
     If the user request is not clear, ask for clarification.
@@ -19,5 +19,6 @@ def ambiguous_agent():
         model,
         tools=[],
         prompt="You are an ambiguous agent. If the user request is not clear, ask for clarification. Do not perform any other activities.",
-        name='ambiguos_agent'
+        name='ambiguos_agent',
+        checkpointer=checkpointer
     )

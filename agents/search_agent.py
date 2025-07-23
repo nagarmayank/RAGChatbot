@@ -1,15 +1,8 @@
 from langchain.tools import tool
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
-from langchain.chat_models import init_chat_model
-from langchain_huggingface import HuggingFaceEmbeddings
-from langgraph.prebuilt import create_react_agent
-from langgraph_supervisor import create_supervisor
 from langchain.tools import tool
 from dotenv import load_dotenv
-from qdrant_client import QdrantClient
-from langchain_qdrant import QdrantVectorStore
-from utils import pretty_print_messages
 from langchain_tavily import TavilySearch
 
 load_dotenv()
@@ -33,7 +26,7 @@ def search_tavily(query: str, max_results=3) -> dict:
     result = search.invoke({'query':query})
     return result
 
-def search_agent():
+def search_agent(checkpointer=None):
     """
     Search agent function that uses TavilySearch to find relevant information.
     Inputs:
@@ -45,5 +38,6 @@ def search_agent():
         model,
         tools=[search_tavily],
         prompt="You are a search agent. Use the TavilySearch tool to find relevant information based on user queries.",
-        name='search_agent'
+        name='search_agent',
+        checkpointer=checkpointer
     )

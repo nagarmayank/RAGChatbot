@@ -1,4 +1,4 @@
-from utils import pretty_print_messages
+from utils.helper_methods import pretty_print_messages
 from agents.supervisor_agent import supervisor_agent
 
 print("Supervisor Agent is ready to use.")

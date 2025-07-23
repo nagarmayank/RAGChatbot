@@ -9,7 +9,7 @@ model_provider = "google_genai" #"groq" #
 
 model = init_chat_model(model=model_name, model_provider=model_provider)
 
-def llm_agent():
+def llm_agent(checkpointer=None):
     """
     Create an agent that handles direct LLM calls.
     """
@@ -17,5 +17,6 @@ def llm_agent():
         model,
         tools=[],
         prompt="You are a helpful agent. Respond in short sentences.",
-        name='llm_agent'
+        name='llm_agent',
+        checkpointer=checkpointer
     )

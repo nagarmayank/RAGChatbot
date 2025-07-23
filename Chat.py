@@ -1,15 +1,14 @@
 import streamlit as st
 from streamlit_chat import message as st_chat_message
-from rag_app import RAGAgent
-from langchain.chat_models import init_chat_model
 from langchain import hub
 from dotenv import load_dotenv
+from agents.supervisor_agent import supervisor_agent
 
 st.set_page_config(page_title="RAG Chatbot", page_icon=":robot_face:", layout="wide", initial_sidebar_state="expanded")
-model = init_chat_model("gemini-2.5-flash-preview-05-20", model_provider="google_genai", temperature=0.7)
-prompt = hub.pull("rlm/rag-prompt")
 
 load_dotenv()
+
+supervisor = supervisor_agent()
 
 # Initialize session state for chat history
 if 'history' not in st.session_state:
@@ -32,9 +31,8 @@ user_question = st.text_input("Ask a question:", key="input")
 if st.button("Submit"):
     if user_question:
         with st.spinner("Generating response"):
-            # Invoke the RAG agent
-            rag_agent = RAGAgent(model, prompt)
-            result = rag_agent.graph.invoke({"question": user_question})
+            # Invoke the supervisor agent to handle the question
+            result = supervisor.invoke({"messages": user_question}, config = {"configurable": {"thread_id": "1"}})
 
             # Add a dummy div for scrolling
             st.markdown(
@@ -44,7 +42,7 @@ if st.button("Submit"):
         # Store the question and answer in history
         st.session_state.history.append({
             "question": user_question,
-            "answer": result["answer"],
+            "answer": result["messages"][-1].content,
             "sources": result.get("sources", [])
         })
         st.rerun()
