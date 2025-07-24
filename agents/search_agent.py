@@ -4,11 +4,12 @@ from langgraph.prebuilt import create_react_agent
 from langchain.tools import tool
 from dotenv import load_dotenv
 from langchain_tavily import TavilySearch
+import os
 
 load_dotenv()
 
-model_name = "gemini-2.5-flash-preview-05-20" #"meta-llama/llama-4-scout-17b-16e-instruct" # 
-model_provider = "google_genai" #"groq" # 
+model_name = os.getenv("model_name")
+model_provider = os.getenv("model_provider")
 
 model = init_chat_model(model=model_name, model_provider=model_provider)
 

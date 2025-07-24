@@ -3,11 +3,12 @@ from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
 from dotenv import load_dotenv
 from utils.db_config import DBConfig
+import os
 
 load_dotenv()
 
-model_name = "gemini-2.5-flash-preview-05-20" #"meta-llama/llama-4-scout-17b-16e-instruct" # 
-model_provider = "google_genai" #"groq" # 
+model_name = os.getenv("model_name")
+model_provider = os.getenv("model_provider")
 
 model = init_chat_model(model=model_name, model_provider=model_provider)
 

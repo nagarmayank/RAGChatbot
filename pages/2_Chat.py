@@ -3,6 +3,7 @@ from streamlit_chat import message as st_chat_message
 from langchain import hub
 from dotenv import load_dotenv
 from agents.supervisor_agent import supervisor_agent
+from streamlit_feedback import streamlit_feedback
 
 st.set_page_config(page_title="RAG Chatbot", page_icon=":robot_face:", layout="wide", initial_sidebar_state="expanded")
 
@@ -28,6 +29,7 @@ st.markdown("<div style='height: 5px;'></div>", unsafe_allow_html=True)
 # Input for user question at the bottom
 user_question = st.text_input("Ask a question:", key="input")
 
+result = {"messages": [{}]}
 if st.button("Submit"):
     if user_question:
         with st.spinner("Generating response"):

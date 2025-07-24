@@ -9,12 +9,13 @@ from agents.search_agent import search_agent
 from agents.ambiguous_agent import ambiguous_agent
 from agents.llm_agent import llm_agent
 
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-model_name = "gemini-2.5-flash-preview-05-20" #"meta-llama/llama-4-scout-17b-16e-instruct" # 
-model_provider = "google_genai" #"groq" # 
+model_name = os.getenv("model_name")
+model_provider = os.getenv("model_provider")
 
 model = init_chat_model(model=model_name, model_provider=model_provider)
 
