@@ -12,4 +12,3 @@ while True:
 
     for chunk in supervisor_agent().stream({"messages": message}):
         pretty_print_messages(chunk)
-        
