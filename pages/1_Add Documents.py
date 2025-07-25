@@ -1,11 +1,8 @@
 import streamlit as st
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-import logging
 import os
 from utils.db_config import DBConfig
-
-logging.basicConfig(level=logging.INFO)
 
 st.title("Add Documents")
 

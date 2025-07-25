@@ -1,7 +1,6 @@
 from langchain.tools import tool
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
-from langchain.tools import tool
 from dotenv import load_dotenv
 from langchain_tavily import TavilySearch
 import os
