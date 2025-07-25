@@ -46,7 +46,7 @@ spec:
     matchLabels:
       app: qdrant-db
   serviceName: qdrant-db
-  replicas: 1
+  replicas: 0
   template:
     metadata:
       labels:
