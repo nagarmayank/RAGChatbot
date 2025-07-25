@@ -67,11 +67,10 @@ pydantic-settings==2.10.1
 pydantic_core==2.33.2
 pydeck==0.9.1
 PyMuPDF==1.26.3
-pyspark==3.4.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 pytz==2025.2
-pywin32==311
+pywin32==311; sys_platform == 'win32'
 PyYAML==6.0.2
 qdrant-client==1.15.0
 referencing==0.36.2
