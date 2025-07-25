@@ -22,7 +22,7 @@ class DBConfig:
         self.qdrant_host = "localhost"
         self.qdrant_port = 6333
         self.collection_name = "rag_documents"
-        self.model_name = "BAAI/bge-small-en"
+        self.model_name = "BAAI/bge-large-en"
         self.model_kwargs = {"device": "cpu"}
         self.encode_kwargs = {"normalize_embeddings": True}
 

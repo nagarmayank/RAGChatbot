@@ -27,13 +27,12 @@ def rag_search(query: str) -> str:
         for doc in docs
     )
 
-def rag_agent(checkpointer=None):
+def rag_agent():
     tools = [rag_search]
     return create_react_agent(
         model,
         tools, 
         prompt="You are a RAG agent skilled in Artificial Intelligence topics. \
                 Use the tools provided to search for relevant context in the vector database.", 
-        name='rag_agent',
-        checkpointer=checkpointer
+        name='rag_agent'
     )

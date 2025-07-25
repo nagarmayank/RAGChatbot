@@ -3,13 +3,19 @@ from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import logging
 import os
-from utils import db_config
 from utils.db_config import DBConfig
 
 logging.basicConfig(level=logging.INFO)
 
 st.title("Add Documents")
 
+with st.expander(label="**About this page**", expanded=True):
+    st.markdown(
+        """
+        This page allows you to upload PDF files to add to the knowledge base.
+        The uploaded documents will be processed and added to the vector database.
+        """
+    )
 uploaded_files = st.file_uploader(
     "Upload PDF files to add to the knowledge base",
     type=["pdf"],
@@ -35,10 +41,7 @@ if uploaded_files:
 
         for uploaded_file in uploaded_files:
             file_path = os.path.join(data_dir, uploaded_file.name)
-            print(file_path)
             pdf_loader = PyMuPDFLoader(file_path=file_path)
             docs = pdf_loader.load_and_split(text_splitter=splitter)
-            print(f"Loaded {len(docs)} documents from {uploaded_file.name}")
-            print(f"Starting adding to vector db...")
             vector_store.add_documents(docs)
     st.success("Vector database updated successfully!")

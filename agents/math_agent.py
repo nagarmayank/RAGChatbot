@@ -39,5 +39,10 @@ def divide(a: str, b: str) -> float:
 
 tools = [add, subtract, multiply, divide]
 
-def math_agent(checkpointer=None):
-    return create_react_agent(model, tools, prompt="You are a math agent. Use the tools provided to perform calculations.", name='math_agent', checkpointer=checkpointer)
+def math_agent():
+    return create_react_agent(
+        model, 
+        tools, 
+        prompt="You are a math agent. Use the tools provided to perform calculations.", 
+        name='math_agent'
+        )

@@ -27,7 +27,7 @@ def search_tavily(query: str, max_results=3) -> dict:
     result = search.invoke({'query':query})
     return result
 
-def search_agent(checkpointer=None):
+def search_agent():
     """
     Search agent function that uses TavilySearch to find relevant information.
     Inputs:
@@ -39,6 +39,5 @@ def search_agent(checkpointer=None):
         model,
         tools=[search_tavily],
         prompt="You are a search agent. Use the TavilySearch tool to find relevant information based on user queries.",
-        name='search_agent',
-        checkpointer=checkpointer
+        name='search_agent'
     )

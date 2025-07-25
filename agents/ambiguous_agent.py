@@ -10,7 +10,7 @@ model_provider = os.getenv("model_provider")
 
 model = init_chat_model(model=model_name, model_provider=model_provider)
 
-def ambiguous_agent(checkpointer=None):
+def ambiguous_agent():
     """
     Create an agent that handles ambiguous requests.
     If the user request is not clear, ask for clarification.
@@ -20,6 +20,5 @@ def ambiguous_agent(checkpointer=None):
         model,
         tools=[],
         prompt="You are an ambiguous agent. If the user request is not clear, ask for clarification. Do not perform any other activities.",
-        name='ambiguos_agent',
-        checkpointer=checkpointer
+        name='ambiguos_agent'
     )

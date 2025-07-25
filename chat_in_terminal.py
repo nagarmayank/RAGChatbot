@@ -10,5 +10,5 @@ while True:
 
     message = [{"role":"user", "content": user_message}]
 
-    for chunk in supervisor_agent().stream({"messages": message}):
+    for chunk in supervisor_agent().stream({"messages": message}, config = {"configurable": {"thread_id": "1"}}):
         pretty_print_messages(chunk)

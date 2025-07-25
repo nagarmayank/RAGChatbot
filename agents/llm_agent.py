@@ -10,7 +10,7 @@ model_provider = os.getenv("model_provider")
 
 model = init_chat_model(model=model_name, model_provider=model_provider)
 
-def llm_agent(checkpointer=None):
+def llm_agent():
     """
     Create an agent that handles direct LLM calls.
     """
@@ -18,6 +18,5 @@ def llm_agent(checkpointer=None):
         model,
         tools=[],
         prompt="You are a helpful agent. Respond in short sentences.",
-        name='llm_agent',
-        checkpointer=checkpointer
+        name='llm_agent'
     )
