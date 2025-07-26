@@ -33,17 +33,17 @@ metadata:
 spec:
   containers:
     - name: ragchatbot
-      image: nagarmayank/ragchatbot:latest
+      image: ragchatbot:latest
       imagePullPolicy: Never
       ports:
         - containerPort: 8501
       resources:
         requests:
-          cpu: "250m"
-          memory: "256Mi"
+          cpu: "500m"
+          memory: "1024Mi"
         limits:
           cpu: "500m"
-          memory: "512Mi"
+          memory: "1024Mi"
       readinessProbe:
         httpGet:
           path: /health
@@ -68,7 +68,7 @@ spec:
   selector:
     matchLabels:
       app: ragchatbot
-  replicas: 1
+  replicas: 0
   template:
     metadata:
       labels:
@@ -77,17 +77,10 @@ spec:
     spec:
       containers:
         - name: ragchatbot
-          image: nagarmayank/ragchatbot
+          image: ragchatbot
           imagePullPolicy: Never
           ports:
             - containerPort: 8501
-          resources:
-            requests:
-              cpu: "250m"
-              memory: "256Mi"
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
 ---
 
 apiVersion: autoscaling/v2

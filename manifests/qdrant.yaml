@@ -1,17 +1,8 @@
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: vectordb
-  labels:
-    name: vectordb
-
----
-
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: qdrant-pv
-  namespace: vectordb
+  namespace: ragchatbot
 spec:
   capacity:
     storage: 10Gi
@@ -27,7 +18,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: qdrant-data
-  namespace: vectordb
+  namespace: ragchatbot
 spec:
   accessModes:
     - ReadWriteMany
@@ -40,18 +31,18 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: qdrant-db
-  namespace: vectordb
+  namespace: ragchatbot
 spec:
   selector:
     matchLabels:
       app: qdrant-db
   serviceName: qdrant-db
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
         app: qdrant-db
-        namespace: vectordb
+        namespace: ragchatbot
     spec:
       containers:
       - name: qdrant-db
@@ -67,7 +58,7 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: qdrant-data
-      namespace: vectordb
+      namespace: ragchatbot
     spec:
       accessModes: [ "ReadWriteMany" ]
       resources:
@@ -78,8 +69,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: qdrant-db
-  namespace: vectordb
+  name: qdrant-db-svc
+  namespace: ragchatbot
 spec:
   selector:
     app: qdrant-db

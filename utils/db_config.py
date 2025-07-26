@@ -19,7 +19,7 @@ class DBConfig:
             Establishes a connection to the Qdrant vector database and loads an existing collection as a vector store using the specified embedding model.
     '''
     def __init__(self):
-        self.qdrant_host = "localhost"
+        self.qdrant_host = "qdrant-db-svc"
         self.qdrant_port = 6333
         self.collection_name = "rag_documents"
         self.model_name = "BAAI/bge-large-en"
@@ -52,5 +52,6 @@ class DBConfig:
             collection_name=self.collection_name,
             embedding=self._get_embeddings(),
             url=f"http://{self.qdrant_host}:{self.qdrant_port}",
+            timeout=120
         )
         return self.vector_store
