@@ -83,3 +83,21 @@ spec:
       protocol: TCP
       port: 6334
       targetPort: 6334
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: qdrant-db-pod
+  namespace: ragchatbot
+spec:
+  containers:
+  - name: qdrant-db
+    image: qdrant/qdrant
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "500m"
+        memory: "1024Mi"

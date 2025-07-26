@@ -1,6 +1,7 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
+import streamlit as st
 
 class DBConfig:
     '''
@@ -25,7 +26,8 @@ class DBConfig:
         self.model_name = "BAAI/bge-large-en"
         self.model_kwargs = {"device": "cpu"}
         self.encode_kwargs = {"normalize_embeddings": True}
-
+        
+    @st.cache_resource
     def _get_embeddings(self):
         """
         Initializes and returns HuggingFaceEmbeddings using the specified model name and keyword arguments.
@@ -51,7 +53,7 @@ class DBConfig:
         self.vector_store = QdrantVectorStore.from_existing_collection(
             collection_name=self.collection_name,
             embedding=self._get_embeddings(),
-            url=f"http://{self.qdrant_host}:{self.qdrant_port}",
+            url=f"{self.qdrant_host}:{self.qdrant_port}",
             timeout=120
         )
         return self.vector_store
