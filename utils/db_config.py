@@ -27,7 +27,6 @@ class DBConfig:
         self.model_kwargs = {"device": "cpu"}
         self.encode_kwargs = {"normalize_embeddings": True}
         
-    @st.cache_resource
     def _get_embeddings(self):
         """
         Initializes and returns HuggingFaceEmbeddings using the specified model name and keyword arguments.
@@ -36,7 +35,7 @@ class DBConfig:
             HuggingFaceEmbeddings: An instance of HuggingFaceEmbeddings initialized with the provided parameters.
         """
         self.embeddings = HuggingFaceEmbeddings(
-            model_name=self.model_name, model_kwargs=self.model_kwargs, encode_kwargs=self.encode_kwargs
+            model_name=self.model_name, model_kwargs=self.model_kwargs, encode_kwargs=self.encode_kwargs, cache_folder='./cache_embeddings'
         )
         return self.embeddings
     
@@ -53,7 +52,7 @@ class DBConfig:
         self.vector_store = QdrantVectorStore.from_existing_collection(
             collection_name=self.collection_name,
             embedding=self._get_embeddings(),
-            url=f"{self.qdrant_host}:{self.qdrant_port}",
+            url=f"http://{self.qdrant_host}:{self.qdrant_port}",
             timeout=120
         )
         return self.vector_store
